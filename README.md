@@ -34,8 +34,8 @@ ViT(
 
 | Model             | Accuracy    | 
 | -----------       | ----------- |
-| Original ViT      |    65.97    |
-| Adapted BigBird           | -           |
+| Original ViT      |    75    |
+| Adapted BigBird           | 73.85           |
 | Random Attention           | -           |
 | Windowed Attention           | -           |
 | Global Attention           | -           |
