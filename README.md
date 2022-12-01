@@ -34,12 +34,30 @@ ViT(
 
 | Model             | Accuracy    | 
 | -----------       | ----------- |
-| Original ViT      |    75    |
-| Adapted BigBird           | 73.85           |
-| Random Attention           | -           |
-| Windowed Attention           | -           |
+| Original ViT      |    75,66 small,64 small p8, 66 small p8 mean    |
+| Adapted BigBird           | 73.85,     61 small p8 mean     |
+| Random Attention           | 68 small , 65 small p8. 58 small p8 mean       |
+| Random Attention + Global          | - , -, 60 small p8 mean       |
+| Random Attention + Window          | - , -, 61.7 small p8 mean       |
+| Windowed Attention           | -           | 63.6
+| Windowed Attention   + Global        | -           | 62
 | Global Attention           | -           |
 
 
 Combinations of the above
+
+
+
+
+| Model             | Accuracy    | 
+| -----------       | ----------- |
+| Original ViT                |53.33|
+| Adapted BigBird             |64.58|
+| Random Attention            |59.37|
+| Random Attention + Global   |62.29|
+| Random Attention + Window   |63.39|
+| Windowed Attention          |66.25| 
+| Windowed Attention+ Global  |65.66|
+| Global Attention            |62.39|
+
 
