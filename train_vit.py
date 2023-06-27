@@ -22,7 +22,7 @@ from models.big_bird_vit import BigBirdViT
 torch.autograd.set_detect_anomaly(True)
 import argparse
 from torch.utils.tensorboard import SummaryWriter
-torch.cuda.set_device(1)
+# torch.cuda.set_device(1)
 
 parser = argparse.ArgumentParser('ViT Args', add_help=False)
 
@@ -55,48 +55,48 @@ parser.add_argument('--resume_ckpt')
 args = parser.parse_args()
 
 def main(args):
-    LOCAL_RANK = args.local_rank
-    DIST = args.distributed
-    DIST = True
-    BASE_CKPT_PATH = "/home/vp.shivasan/IvT/SparseAttentionViT/ckpts/"
-    MODEL_CKPT_PATH = "/home/vp.shivasan/IvT/SparseAttentionViT/ckpts/" + args.vit_arch +"/"
-    BASE_TENSORBOARD_PATH = "/home/vp.shivasan/IvT/SparseAttentionViT/tensorboard/"
-    BASE_LOG_NAME = str(args.image_size)+ "_p" +str(args.patch_size)
-    CUSTOM_LOG_NAME = "_BB_Global-200epochs_1e-3" # Change this
-    RUN_LOG_NAME = BASE_LOG_NAME + CUSTOM_LOG_NAME
-    RESUME = False
-    resume_ckpt_path = ""
+    # LOCAL_RANK = args.local_rank
+    # DIST = args.distributed
+    # DIST = True
+    # BASE_CKPT_PATH = "/home/vp.shivasan/IvT/SparseAttentionViT/ckpts/"
+    # MODEL_CKPT_PATH = "/home/vp.shivasan/IvT/SparseAttentionViT/ckpts/" + args.vit_arch +"/"
+    # BASE_TENSORBOARD_PATH = "/home/vp.shivasan/IvT/SparseAttentionViT/tensorboard/"
+    # BASE_LOG_NAME = str(args.image_size)+ "_p" +str(args.patch_size)
+    # CUSTOM_LOG_NAME = "_BB_Global-200epochs_1e-3" # Change this
+    # RUN_LOG_NAME = BASE_LOG_NAME + CUSTOM_LOG_NAME
+    # RESUME = False
+    # resume_ckpt_path = ""
 
 
-    if(LOCAL_RANK == 1):
-        RUN_CKPT_SAVE_PATH = BASE_CKPT_PATH + RUN_LOG_NAME + "/"
-        RUN_TENSORBOARD_PATH = BASE_TENSORBOARD_PATH + RUN_LOG_NAME + "/"
-        if not os.path.exists(RUN_CKPT_SAVE_PATH):
-            print("Creating model checkpoint dir")
-            os.makedirs(RUN_CKPT_SAVE_PATH)
-        else:
-            print("Model checkpoint dir exsist, make sure log name is different or else it will get overwritten")
+    # if(LOCAL_RANK == 1):
+    #     RUN_CKPT_SAVE_PATH = BASE_CKPT_PATH + RUN_LOG_NAME + "/"
+    #     RUN_TENSORBOARD_PATH = BASE_TENSORBOARD_PATH + RUN_LOG_NAME + "/"
+    #     if not os.path.exists(RUN_CKPT_SAVE_PATH):
+    #         print("Creating model checkpoint dir")
+    #         os.makedirs(RUN_CKPT_SAVE_PATH)
+    #     else:
+    #         print("Model checkpoint dir exsist, make sure log name is different or else it will get overwritten")
         
-        if not os.path.exists(RUN_TENSORBOARD_PATH):
-            print("Creating tensorboard")
-            os.makedirs(RUN_TENSORBOARD_PATH)
-        else:
-            print("tensorboard dir exisist")
+    #     if not os.path.exists(RUN_TENSORBOARD_PATH):
+    #         print("Creating tensorboard")
+    #         os.makedirs(RUN_TENSORBOARD_PATH)
+    #     else:
+    #         print("tensorboard dir exisist")
         
-        writer = SummaryWriter(RUN_TENSORBOARD_PATH)
+    #     writer = SummaryWriter(RUN_TENSORBOARD_PATH)
 
-    if DIST:
-        print("Intiliasing distributed process")
-        DEVICE = torch.device('cuda:%d' % LOCAL_RANK)
-        torch.cuda.set_device(LOCAL_RANK)
-        print(DEVICE)
-        dist.init_process_group(backend='nccl', init_method='env://',
-                            world_size=args.num_gpus, rank=LOCAL_RANK)
-        print("Distributed process running")
+    # if DIST:
+    #     print("Intiliasing distributed process")
+    #     DEVICE = torch.device('cuda:%d' % LOCAL_RANK)
+    #     torch.cuda.set_device(LOCAL_RANK)
+    #     print(DEVICE)
+    #     dist.init_process_group(backend='nccl', init_method='env://',
+    #                         world_size=args.num_gpus, rank=LOCAL_RANK)
+    #     print("Distributed process running")
     
-    else:
-        CUDA_ = 'cuda:1'
-        DEVICE = torch.device(CUDA_)
+    # else:
+    CUDA_ = 'cuda:0'
+    DEVICE = torch.device(CUDA_)
 
 
     # BATCH_SIZE_TRAIN = 64
@@ -118,12 +118,12 @@ def main(args):
     test_set = torchvision.datasets.ImageFolder(root="/home/vp.shivasan/IvT/data/imagenette2/val",transform=transform_test)
     
 
-    if(DIST):
-        sampler_train = torch.utils.data.distributed.DistributedSampler(train_set)
-        sampler_val = torch.utils.data.distributed.DistributedSampler(test_set,shuffle = False)
-    else:
-        sampler_train = torch.utils.data.RandomSampler(train_set)
-        sampler_val = torch.utils.data.SequentialSampler(test_set)
+    # if(DIST):
+    #     sampler_train = torch.utils.data.distributed.DistributedSampler(train_set)
+    #     sampler_val = torch.utils.data.distributed.DistributedSampler(test_set,shuffle = False)
+    # else:
+    sampler_train = torch.utils.data.RandomSampler(train_set)
+    sampler_val = torch.utils.data.SequentialSampler(test_set)
 
     batch_sampler_train = torch.utils.data.BatchSampler(
         sampler_train, args.train_batch_size, drop_last=True)
