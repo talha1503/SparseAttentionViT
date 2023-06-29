@@ -21,6 +21,8 @@ from vit_pytorch import ViT
 from models.big_bird_vit import BigBirdViT
 torch.autograd.set_detect_anomaly(True)
 import argparse
+from datasets import load_dataset
+
 from torch.utils.tensorboard import SummaryWriter
 # torch.cuda.set_device(1)
 
@@ -53,6 +55,22 @@ parser.add_argument('--resume_ckpt')
 
 
 args = parser.parse_args()
+
+class ImageClassificationDataset(torch.utils.data.Dataset):
+    def __init__(self, dataset, transform):
+        self.dataset = dataset
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.dataset)
+
+    def __getitem__(self, idx):
+        image = self.dataset[idx]["image"]
+        image = self.transform(image)
+        label = self.dataset[idx]["label"]
+        return image, label
+
+
 
 def main(args):
     # LOCAL_RANK = args.local_rank
@@ -114,9 +132,11 @@ def main(args):
                                                         torchvision.transforms.ToTensor(),
                                                         torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])])
-    train_set = torchvision.datasets.ImageFolder(root="/home/vp.shivasan/IvT/data/imagenette2/train",transform=transform_train)
-    test_set = torchvision.datasets.ImageFolder(root="/home/vp.shivasan/IvT/data/imagenette2/val",transform=transform_test)
-    
+    # train_set = torchvision.datasets.ImageFolder(root="/home/vp.shivasan/IvT/data/imagenette2/train",transform=transform_train)
+    # test_set = torchvision.datasets.ImageFolder(root="/home/vp.shivasan/IvT/data/imagenette2/val",transform=transform_test)
+    dataset = load_dataset("imagenet-1k")
+    train_set = ImageClassificationDataset(dataset["train"], transform_train)
+    test_set = ImageClassificationDataset(dataset["validation"], transform_test)
 
     # if(DIST):
     #     sampler_train = torch.utils.data.distributed.DistributedSampler(train_set)
