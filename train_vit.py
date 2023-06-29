@@ -17,7 +17,7 @@ from torch.utils.data import DataLoader, Dataset
 from torchvision import datasets, transforms
 import torchvision
 from tqdm import tqdm
-from vit_pytorch import ViT
+# from vit_pytorch import ViT
 from models.big_bird_vit import BigBirdViT
 torch.autograd.set_detect_anomaly(True)
 import argparse
@@ -155,55 +155,69 @@ def main(args):
     
     
 
-    if(args.vit_arch == "OriginalViT"):
-        model = ViT(
-            image_size = args.image_size,
-            patch_size = args.patch_size,
-            num_classes = 10,
-            dim = 512,
-            depth = 3,
-            heads = 8,
-            mlp_dim = 1024,
-            dropout = 0.1,
-            emb_dropout = 0.1,
-            pool = 'mean'
-        )
+    # if(args.vit_arch == "OriginalViT"):
+    #     model = ViT(
+    #         image_size = args.image_size,
+    #         patch_size = args.patch_size,
+    #         num_classes = 10,
+    #         dim = 512,
+    #         depth = 3,
+    #         heads = 8,
+    #         mlp_dim = 1024,
+    #         dropout = 0.1,
+    #         emb_dropout = 0.1,
+    #         pool = 'mean'
+    #     )
 
-    elif(args.vit_arch == "BigBirdViT"):
-        attentions_to_use = ["Global"]
+    # elif(args.vit_arch == "BigBirdViT"):
+    #     attentions_to_use = ["Global"]
 
-        model = BigBirdViT(
-            image_size = args.image_size,
-            patch_size = args.patch_size,
-            num_classes = 10,
-            dim = 512,
-            depth = 3,
-            heads = 8,
-            mlp_dim = 1024,
-            dropout = 0.1,
-            emb_dropout = 0.1,
-            attention_to_use = attentions_to_use,
-            pool = 'mean'
-        )
-    else:
-        print("Error Unknown Model ",args.vit_arch)
-        exit()
+    #     model = BigBirdViT(
+    #         image_size = args.image_size,
+    #         patch_size = args.patch_size,
+    #         num_classes = 10,
+    #         dim = 512,
+    #         depth = 3,
+    #         heads = 8,
+    #         mlp_dim = 1024,
+    #         dropout = 0.1,
+    #         emb_dropout = 0.1,
+    #         attention_to_use = attentions_to_use,
+    #         pool = 'mean'
+    #     )
+    # else:
+    #     print("Error Unknown Model ",args.vit_arch)
+    #     exit()
     
+    attentions_to_use = ["Global"]
+    model = BigBirdViT(
+        image_size = args.image_size,
+        patch_size = args.patch_size,
+        num_classes = 10,
+        dim = 512,
+        depth = 3,
+        heads = 8,
+        mlp_dim = 1024,
+        dropout = 0.1,
+        emb_dropout = 0.1,
+        attention_to_use = attentions_to_use,
+        pool = 'mean'
+    )
 
     torch.manual_seed(317)
     torch.backends.cudnn.benchmark = True 
     
 
     model = model.to(DEVICE)
-    if DIST:
-        model = nn.parallel.DistributedDataParallel(model,
-                                                device_ids=[LOCAL_RANK])                       
-    else:
-        model = nn.DataParallel(model,device_ids=[1,]).to('cuda:1')
+    # if DIST:
+    #     model = nn.parallel.DistributedDataParallel(model,
+    #                                             device_ids=[LOCAL_RANK])                       
+    # else:
+        # model = nn.DataParallel(model,device_ids=[1,]).to('cuda:1')
     
     
-    if(RESUME):
-        model.load_state_dict(torch.load(resume_ckpt_path))
+    # if(RESUME):
+    #     model.load_state_dict(torch.load(resume_ckpt_path))
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
@@ -245,25 +259,28 @@ def main(args):
                 acc = (val_output.argmax(dim=1) == label).float().mean()
                 epoch_val_accuracy += acc / len(valid_loader)
                 epoch_val_loss += val_loss / len(valid_loader)
-        if(LOCAL_RANK == 1):
             print(
                 f"Epoch : {epoch+1} - loss : {epoch_loss:.4f} - acc: {epoch_accuracy:.4f} - val_loss : {epoch_val_loss:.4f} - val_acc: {epoch_val_accuracy:.4f}\n"
             )
-            if(best_val_acc < epoch_val_accuracy):
-                torch.save(model.state_dict(),  RUN_CKPT_SAVE_PATH + "best_ckpt.pt")
-                my_dict = {'Epoch':epoch+1,'Val_acc':epoch_val_accuracy.item()}
-                with open(RUN_CKPT_SAVE_PATH + "meta_json.json", "w") as fp:
-                    json.dump(my_dict,fp) 
-                best_val_acc = epoch_val_accuracy
-            writer.add_scalar('Train loss', epoch_loss, epoch)
-            writer.add_scalar('Train acc', epoch_accuracy, epoch)
-            writer.add_scalar('Val loss', epoch_val_loss, epoch)
-            writer.add_scalar('Val acc', epoch_val_accuracy, epoch)
-            writer.add_scalar('LR', [ group['lr'] for group in optimizer.param_groups ][0], epoch)
+        # if(LOCAL_RANK == 1):
+        #     print(
+        #         f"Epoch : {epoch+1} - loss : {epoch_loss:.4f} - acc: {epoch_accuracy:.4f} - val_loss : {epoch_val_loss:.4f} - val_acc: {epoch_val_accuracy:.4f}\n"
+        #     )
+        #     if(best_val_acc < epoch_val_accuracy):
+        #         torch.save(model.state_dict(),  RUN_CKPT_SAVE_PATH + "best_ckpt.pt")
+        #         my_dict = {'Epoch':epoch+1,'Val_acc':epoch_val_accuracy.item()}
+        #         with open(RUN_CKPT_SAVE_PATH + "meta_json.json", "w") as fp:
+        #             json.dump(my_dict,fp) 
+        #         best_val_acc = epoch_val_accuracy
+        #     writer.add_scalar('Train loss', epoch_loss, epoch)
+        #     writer.add_scalar('Train acc', epoch_accuracy, epoch)
+        #     writer.add_scalar('Val loss', epoch_val_loss, epoch)
+        #     writer.add_scalar('Val acc', epoch_val_accuracy, epoch)
+        #     writer.add_scalar('LR', [ group['lr'] for group in optimizer.param_groups ][0], epoch)
         scheduler.step(epoch_val_loss)
 
-    if(LOCAL_RANK == 1):
-        torch.save(model.state_dict(), RUN_CKPT_SAVE_PATH + "best_ckpt_" + str(epoch)+".pt")
+    # if(LOCAL_RANK == 1):
+        # torch.save(model.state_dict(), RUN_CKPT_SAVE_PATH + "best_ckpt_" + str(epoch)+".pt")
 
 if __name__ == '__main__':
   main(args)
