@@ -132,11 +132,11 @@ def main(args):
                                                         torchvision.transforms.ToTensor(),
                                                         torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])])
-    # train_set = torchvision.datasets.ImageFolder(root="/home/vp.shivasan/IvT/data/imagenette2/train",transform=transform_train)
-    # test_set = torchvision.datasets.ImageFolder(root="/home/vp.shivasan/IvT/data/imagenette2/val",transform=transform_test)
-    dataset = load_dataset("imagenet-1k")
-    train_set = ImageClassificationDataset(dataset["train"], transform_train)
-    test_set = ImageClassificationDataset(dataset["validation"], transform_test)
+    train_set = torchvision.datasets.ImageFolder(root="/content/train.X1",transform=transform_train)
+    test_set = torchvision.datasets.ImageFolder(root="/content/val.X",transform=transform_test)
+    # dataset = load_dataset("imagenet-1k")
+    # train_set = ImageClassificationDataset(dataset["train"], transform_train)
+    # test_set = ImageClassificationDataset(dataset["validation"], transform_test)
 
     # if(DIST):
     #     sampler_train = torch.utils.data.distributed.DistributedSampler(train_set)
