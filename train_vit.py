@@ -21,9 +21,9 @@ from tqdm import tqdm
 from models.big_bird_vit import BigBirdViT
 torch.autograd.set_detect_anomaly(True)
 import argparse
-from datasets import load_dataset
+# from datasets import load_dataset
 
-from torch.utils.tensorboard import SummaryWriter
+# from torch.utils.tensorboard import SummaryWriter
 # torch.cuda.set_device(1)
 
 parser = argparse.ArgumentParser('ViT Args', add_help=False)
@@ -37,7 +37,7 @@ parser.add_argument('--vit_arch', default="OriginalViT", type=str,help="Original
 
 
 #Training specs
-parser.add_argument('--epochs', default=200, type=int)
+parser.add_argument('--epochs', default=1, type=int)
 parser.add_argument('--lr', default=1e-3, type=float)
 parser.add_argument('--gamma', default=0.7, type=float)
 
@@ -193,7 +193,7 @@ def main(args):
     model = BigBirdViT(
         image_size = args.image_size,
         patch_size = args.patch_size,
-        num_classes = 10,
+        num_classes = 100,
         dim = 512,
         depth = 3,
         heads = 8,
