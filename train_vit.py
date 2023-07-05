@@ -37,7 +37,7 @@ parser.add_argument('--vit_arch', default="OriginalViT", type=str,help="Original
 
 
 #Training specs
-parser.add_argument('--epochs', default=1, type=int)
+parser.add_argument('--epochs', default=10, type=int)
 parser.add_argument('--lr', default=1e-3, type=float)
 parser.add_argument('--gamma', default=0.7, type=float)
 
