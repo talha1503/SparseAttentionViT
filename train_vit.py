@@ -132,8 +132,8 @@ def main(args):
                                                         torchvision.transforms.ToTensor(),
                                                         torchvision.transforms.Normalize(mean=[0.485, 0.456, 0.406],
                                     std=[0.229, 0.224, 0.225])])
-    train_set = torchvision.datasets.ImageFolder(root="/content/train.X1",transform=transform_train)
-    test_set = torchvision.datasets.ImageFolder(root="/content/val.X",transform=transform_test)
+    train_set = torchvision.datasets.ImageFolder(root="/kaggle/input/imagenet100/train.X1",transform=transform_train)
+    test_set = torchvision.datasets.ImageFolder(root="/kaggle/input/imagenet100/val.X",transform=transform_test)
     # dataset = load_dataset("imagenet-1k")
     # train_set = ImageClassificationDataset(dataset["train"], transform_train)
     # test_set = ImageClassificationDataset(dataset["validation"], transform_test)
