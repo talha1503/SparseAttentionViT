@@ -227,11 +227,11 @@ def main(args):
 
     best_val_acc = 0.0
     print("Training ", args.vit_arch)
-    for epoch in tqdm(range(args.epochs)):
+    for epoch in tqdm(range(args.epochs), position=0, leave=True):
         epoch_loss = 0
         epoch_accuracy = 0
 
-        for data, label in tqdm(train_loader):
+        for data, label in tqdm(train_loader, position=0, leave=True):
             data = data.to(DEVICE)
             label = label.to(DEVICE)
 
