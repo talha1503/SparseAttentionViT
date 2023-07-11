@@ -1,0 +1,8 @@
+huggingface-hub
+requests==2.28.1
+tokenizers==0.13.1
+torch==1.10.1
+torchvision==0.11.2
+tqdm==4.64.1
+transformers==4.25.0
+vit-pytorch==0.38.1
