@@ -19,7 +19,7 @@ import torchvision
 from tqdm import tqdm
 # from vit_pytorch import ViT
 from models.big_bird_vit import BigBirdViT
-torch.autograd.set_detect_anomaly(True)
+# torch.autograd.set_detect_anomaly(True)
 import argparse
 # from datasets import load_dataset
 
@@ -205,7 +205,7 @@ def main(args):
     )
 
     torch.manual_seed(317)
-    torch.backends.cudnn.benchmark = True 
+    # torch.backends.cudnn.benchmark = True 
     
 
     model = model.to(DEVICE)
